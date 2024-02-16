@@ -9,7 +9,7 @@ from cosmos.constants import TestBehavior
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
 
-PROJECT_ROOT_PATH="/opt/airflow/git/dbt-azure-monitor.git/dags/dbt/dbtAzureMonitor" # --> managed airflow path
+PROJECT_ROOT_PATH="/opt/airflow/git/dbt-azure-monitor.git/dag/dbt/dbtAzureMonitor" # --> managed airflow path
 #PROJECT_ROOT_PATH="/home/gopal/dbt-workspace/jaffle_shop/dags/dbt/jaffle_shop"  --> local development path
 # PROJECT_ROOT_PATH=Variable.get("ROOT_PATH")
 
