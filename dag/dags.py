@@ -24,30 +24,31 @@ profile_config = ProfileConfig(
     )
 )
 
-with DAG(
-        dag_id="dbtAzureMonitor",
-        start_date=datetime(2024, 2, 15),
-        schedule="@daily",
-) as dag:
-    e1 = EmptyOperator(task_id="pre_dbt")
+default_args = {
+ 'start_date': datetime (2024, 2, 14),
+ 'retries': 1,
+}
 
-    dbt_tg = DbtTaskGroup(
-        project_config=ProjectConfig(dbt_project_path=PROJECT_ROOT_PATH,
-                                     manifest_path=f"{PROJECT_ROOT_PATH}/target/manifest.json",),
-        profile_config=profile_config,
-        render_config=RenderConfig(
-            load_method=LoadMode.DBT_MANIFEST,
-            #By default cosmos generate dag that execute model and test for that model, if you don't want to use test then pass test_behavior=TestBehavior.NONE
-            #test_behavior=TestBehavior.NONE
-        ),
-    )
+# Instantiate your DAG
+dag = DAG ('my_first_dag', default_args=default_args, schedule_interval=None)
 
-    e2 = EmptyOperator(task_id="post_dbt")
+# Define tasks
+def task1():
+ print ("Executing Task 1")
 
-    run_this_2 = BashOperator(
-        task_id="run_after_loop",
-        bash_command="dbtlog --env=databricks --dwhcid=databricks_connection --azmonitorcid=azure_monitor",
-        trigger_rule= "all_done"
-    )
-    
-    e1 >> dbt_tg >> e2 >> run_this_2
+def task2():
+ print ("Executing Task 2")
+
+task_1 = PythonOperator(
+ task_id='task_1',
+ python_callable=task1,
+ dag=dag,
+)
+task_2 = PythonOperator(
+ task_id='task_2',
+ python_callable=task2,
+ dag=dag,
+)
+
+# Set task dependencies
+task_1 >> task_2
